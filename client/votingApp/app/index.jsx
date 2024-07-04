@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import tw from 'twrnc';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Index() {
   const router = useRouter();
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+          router.push('/vote'); // Redirect to /vote if token exists
+        }
+      } catch (error) {
+        console.error('Error checking token:', error);
+        // Handle error (e.g., fallback to login screen)
+      }
+    };
+    checkToken();
+  }, []); 
 
   const handleGetStarted = () => {
     router.push('/login');
@@ -30,6 +45,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
+    // fontFamily:'Outfit-Regular',
     alignItems: 'center',
     backgroundColor: '#fff',
   },

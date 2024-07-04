@@ -3,6 +3,7 @@ import { View, TextInput, Text, Alert, StyleSheet, Image } from 'react-native';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
 import tw from 'twrnc';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Signup() {
   const router = useRouter();
@@ -26,10 +27,13 @@ export default function Signup() {
         password: password,
       });
       console.log(response.data);
+      const token = response.data.token;
+      await AsyncStorage.setItem('token', token);
       Alert.alert('Signup success');
+      router.push('/home')
       // Store token in AsyncStorage or SecureStore for later use (recommended)
     } catch (error) {
-      console.error('Signup error:', error.response.data);
+      console.error('Signup error:', error.response.data.message);
       Alert.alert('Signup failed', 'Please try again later');
     }
   };

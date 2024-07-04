@@ -1,25 +1,31 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Alert, StyleSheet, Image, Text } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, TextInput,ToastAndroid, Button, Alert, StyleSheet, Image, Text } from 'react-native';
 import axios from 'axios';
 import tw from 'twrnc'
-import { router, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 export default function Login() {
   const [aadharCardNumber, setAadharCardNumber] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter()
 
   const handleLogin = async () => {
-    const router = useRouter()
     try {
       const response = await axios.post('https://voting-appbackend-pravin435916s-projects.vercel.app/api/users/login', {
         aadharCardNumber: parseInt(aadharCardNumber),
         password: password,
       });
+      const token = response.data.token;
+    // Store token in AsyncStorage
+      await AsyncStorage.setItem('token', token);
+      console.log(token)
       console.log(response.data)
-      Alert.alert('Login success');
+      ToastAndroid.show('Login success',ToastAndroid.BOTTOM);
+      router.push('/home')
       // Store token in AsyncStorage or SecureStore for later use (recommended)
     } catch (error) {
-      console.error('Login error:', error.response.data);
-      Alert.alert('Login failed', 'Please try again later');
+      // console.error('Login error:', error.response.data);
+      ToastAndroid.show('Login failed', 'Please try again later',ToastAndroid.BOTTOM);
     }
   };
 
@@ -57,6 +63,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
+    // fontFamily:'Outfit-Regular',
     alignItems: 'center',
     backgroundColor: '#f8f8f8',
   },

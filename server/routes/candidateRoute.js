@@ -87,7 +87,7 @@ router.post("/vote/:candidateId",verifyToken, async (req, res) => {
       return res.status(400).json({ message: "User Already Voted" });
     }
     if(user.role === 'admin') {
-      return res.status(400).json({ message: " Admin can't Vote" });
+      return res.status(400).json({ message: "Admin can't Vote" });
     }
     candidate.votes.push({user:userId});
     candidate.count++;
